@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("api/todos")
@@ -30,4 +32,12 @@ private TodoService todoService;
         return new ResponseEntity<>(todoDto, HttpStatus.OK);
 
     }
+
+    //get all todos rest api
+    @GetMapping
+    public ResponseEntity<List<TodoDto>>getAllTodos(){
+        List<TodoDto>todos=todoService.getAllTodos();
+        return  ResponseEntity.ok(todos);
+    }
+
 }
