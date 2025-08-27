@@ -60,4 +60,11 @@ private TodoService todoService;
         TodoDto updatedDto = todoService.completeTodo(id);
         return ResponseEntity.ok(updatedDto);
     }
+
+    //incomplete todo rest api
+    @PatchMapping("{id}/in-complete")
+    public ResponseEntity<TodoDto> inCompleteTodo(@PathVariable Long id){
+        TodoDto updatedDto=todoService.inCompleteTodo(id);
+        return  ResponseEntity.ok(updatedDto);
+    }
 }
