@@ -38,7 +38,9 @@ public static PasswordEncoder passwordEncoder(){
 //                    authorize.requestMatchers(HttpMethod.GET,"/api/**").hasAnyRole("Admin","USER");
 //                            authorize.requestMatchers(HttpMethod.PATCH,"/api/**").hasAnyRole("Admin","USER");
 
-        authorize.requestMatchers(HttpMethod.GET,"/api/**").permitAll();
+
+
+        authorize.requestMatchers("/api/auth/**").permitAll();
                         authorize.anyRequest().authenticated();
 
                 }
