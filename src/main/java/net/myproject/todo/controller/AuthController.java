@@ -1,16 +1,15 @@
 package net.myproject.todo.controller;
 
 import lombok.AllArgsConstructor;
+import net.myproject.todo.dto.JwtAuthResponse;
 import net.myproject.todo.dto.LoginDto;
 import net.myproject.todo.dto.RegisterDto;
 import net.myproject.todo.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
@@ -26,9 +25,11 @@ public class AuthController {
      }
 
      @PostMapping("/login")
-     public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-        String response=authService.login(loginDto);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+     public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto){
+        String token=authService.login(loginDto);
+        JwtAuthResponse jwtAuthResponse=new JwtAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return new ResponseEntity<>(jwtAuthResponse,HttpStatus.OK);
      }
 
 }
