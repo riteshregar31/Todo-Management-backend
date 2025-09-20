@@ -5,16 +5,20 @@ import net.myproject.todo.dto.TodoDto;
 import java.util.List;
 
 public interface TodoService {
+
+    // Admin only
     TodoDto addTodo(TodoDto todoDto);
     TodoDto getTodo(Long id);
-
     List<TodoDto> getAllTodos();
-
-    TodoDto updateTodo(TodoDto todoDto,Long id);
-
+    TodoDto updateTodo(TodoDto todoDto, Long id);
     void deleteTodo(Long id);
 
-    TodoDto completeTodo(Long id);
+    // User-specific
+    List<TodoDto> getTodosForUser(String username);
 
-    TodoDto inCompleteTodo(Long id);
+    // Update completion status
+    void updateTodoCompletion(String username, Long todoId, boolean completed);
+
+    TodoDto completeTodo(Long todoId, String username);
+    TodoDto inCompleteTodo(Long todoId, String username);
 }

@@ -40,8 +40,8 @@ public class SpringSecurityConfig {
                     authorize.anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults());
-http.exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint));
-http.addFilterAfter(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint));
+        http.addFilterAfter(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     @Bean

@@ -6,6 +6,7 @@ import net.myproject.todo.service.TodoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,65 +15,72 @@ import java.util.List;
 @RestController
 @RequestMapping("api/todos")
 @AllArgsConstructor
- public class TodoController {
+public class TodoController {
 
-private TodoService todoService;
+    private TodoService todoService;
 
-//add todo rest api
+    //  Admin Only
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<TodoDto> addTodo(@RequestBody TodoDto todoDto){
-        TodoDto savedTodo =todoService.addTodo(todoDto);
+        TodoDto savedTodo = todoService.addTodo(todoDto);
         return new ResponseEntity<>(savedTodo, HttpStatus.CREATED);
     }
 
-
-    //get todo rest api
-     @GetMapping("{id}")
-     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public  ResponseEntity<TodoDto> getTodo(@PathVariable("id") Long todoId){
+    @GetMapping("{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public ResponseEntity<TodoDto> getTodo(@PathVariable("id") Long todoId){
         TodoDto todoDto = todoService.getTodo(todoId);
         return new ResponseEntity<>(todoDto, HttpStatus.OK);
-
     }
 
-    //get all todos rest api
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<List<TodoDto>>getAllTodos(){
-        List<TodoDto>todos=todoService.getAllTodos();
-        return  ResponseEntity.ok(todos);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<TodoDto>> getAllTodos(){
+        List<TodoDto> todos = todoService.getAllTodos();
+        return ResponseEntity.ok(todos);
     }
 
-    //update todo rest api
     @PutMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TodoDto> updateTodo(@RequestBody TodoDto todoDto,@PathVariable("id") Long id){
+    public ResponseEntity<TodoDto> updateTodo(@RequestBody TodoDto todoDto, @PathVariable("id") Long id){
         TodoDto updatedTodo = todoService.updateTodo(todoDto, id);
         return ResponseEntity.ok(updatedTodo);
     }
 
-    //Build delete Todo rest api
-@DeleteMapping("{id}")
-@PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteTodo(@PathVariable("id") Long id){
         todoService.deleteTodo(id);
-        return ResponseEntity.ok("todo deleted successfully");
+        return ResponseEntity.ok("Todo deleted successfully");
     }
 
-    //complete todo rest api
+    //  User Endpoints
+
+    @GetMapping("/my")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public ResponseEntity<List<TodoDto>> getMyTodos(Authentication authentication){
+        String username = authentication.getName();
+        List<TodoDto> todos = todoService.getTodosForUser(username);
+        return ResponseEntity.ok(todos);
+    }
+
+    // Mark as complete
     @PatchMapping("{id}/complete")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<TodoDto> completeTodo(@PathVariable("id") Long id){
-        TodoDto updatedDto = todoService.completeTodo(id);
+    public ResponseEntity<TodoDto> completeTodo(@PathVariable Long id, Authentication authentication){
+        String username = authentication.getName();
+        TodoDto updatedDto = todoService.completeTodo(id, username);
         return ResponseEntity.ok(updatedDto);
     }
 
-    //incomplete todo rest api
+    // Mark as incomplete
     @PatchMapping("{id}/in-complete")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<TodoDto> inCompleteTodo(@PathVariable Long id){
-        TodoDto updatedDto=todoService.inCompleteTodo(id);
-        return  ResponseEntity.ok(updatedDto);
+    public ResponseEntity<TodoDto> inCompleteTodo(@PathVariable Long id, Authentication authentication){
+        String username = authentication.getName();
+        TodoDto updatedDto = todoService.inCompleteTodo(id, username);
+        return ResponseEntity.ok(updatedDto);
     }
 }

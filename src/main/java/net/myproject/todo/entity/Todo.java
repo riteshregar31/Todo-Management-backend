@@ -22,8 +22,8 @@ public class Todo {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false) //jpa khud hi same col name assign kar dega,//no need to write@Column(name="description",nullable=false)
+    @Column(nullable = false)//jpa khud hi same col name assign kar dega,//no need to write@Column(name="description",nullable=false)
     private String description;
 
-    private boolean completed;
+
 }
